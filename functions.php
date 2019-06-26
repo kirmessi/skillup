@@ -7,8 +7,6 @@
  * @package nix
  */
 
-use App\Config\Acf\Fields\Cpt;
-
 require_once 'vendor/autoload.php';
 
 new App\Core();
