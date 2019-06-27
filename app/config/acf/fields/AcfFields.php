@@ -2,13 +2,13 @@
 
 namespace App\Config\Acf\Fields;
 
-use App\CustomTableModel;
+use App\Orm\Model\CustomTableModel;
 
 /**
  * Class Cpt
  * @package App\Config\Acf\Fields
  */
-Class Cpt
+class AcfFields
 {
     /**
      * @var array
@@ -23,15 +23,15 @@ Class Cpt
      */
     public function __construct()
     {
-        add_action('acf/init', [$this, 'register_cpt_fields']);
-        add_filter('acf/load_value', [$this, 'my_acf_load_value'], 11, 3);
-        add_filter('acf/update_value', [$this, 'my_acf_update_value'], 10, 2);
+        add_action('acf/init', [$this, 'registerCptFields']);
+        add_filter('acf/load_value', [$this, 'myAcfLoadValue'], 11, 3);
+        add_filter('acf/update_value', [$this, 'myAcfUpdateValue'], 10, 2);
     }
 
     /**
      * Register cpt fields
      */
-    public function register_cpt_fields()
+    public function registerCptFields()
     {
         acf_add_local_field_group(array(
             'key' => 'group_5d0b440557dfgd98',
@@ -93,21 +93,20 @@ Class Cpt
             'active' => true,
             'description' => '',
         ));
-
     }
 
     /**
      * @param $value
      * @param $post_id
      * @param $field
+     *
      * @return mixed
      */
-    function my_acf_load_value($value, $post_id, $field)
+    public function myAcfLoadValue($value, $post_id, $field)
     {
         $data = CustomTableModel::where('post_id', $post_id)->get()->toArray();
 
         if (in_array($field['key'], $this->keys)) {
-
             return $data[0]{$field['key']};
         }
     }
@@ -116,9 +115,8 @@ Class Cpt
      * @param $value
      * @param $post_id
      */
-    function my_acf_update_value($value, $post_id)
+    public function myAcfUpdateValue($value, $post_id)
     {
-
         if (empty($_POST['acf'])) {
             return;
         }
@@ -128,13 +126,11 @@ Class Cpt
         $post_id_exists = CustomTableModel::where('post_id', $post_id)->exists();
 
         if ($post_id_exists) {
-
             CustomTableModel::where('post_id', $post_id)->update([
                 'title' => $fields['title'],
                 'description' => $fields['description'],
                 'updated_at' => current_time('mysql', false),
             ]);
-
         } else {
             CustomTableModel::create(
                 [
@@ -145,5 +141,4 @@ Class Cpt
             );
         }
     }
-
 }

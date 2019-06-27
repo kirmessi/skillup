@@ -1,12 +1,14 @@
 <?php
 
-namespace App;
+namespace App\Rest;
+
+use App\Orm\Model\CustomTableModel;
 
 /**
  * Class Core
  * @package App
  */
-class Core
+class Api
 {
     /**
      * @var string
@@ -18,14 +20,14 @@ class Core
      */
     public function __construct()
     {
-        add_action('rest_api_init', [$this, 'rest_api_route_get_cpt']);
+        add_action('rest_api_init', [$this, 'restApiRouteGetCpt']);
         $this->namespace = 'nix/v1';
     }
 
     /**
      * Register rest api route for crud cpt data and login
      */
-    public function rest_api_route_get_cpt()
+    public function restApiRouteGetCpt()
     {
         register_rest_route($this->namespace, '(?P<id>\d+)', array(
             'methods' => 'GET',
@@ -46,7 +48,10 @@ class Core
             'permission_callback' => null,
         ));
 
-        register_rest_route($this->namespace, 'create', array(
+        register_rest_route(
+            $this->namespace,
+            'create',
+            array(
                 'methods' => 'POST',
                 'callback' => [$this, 'create_cpt_data'],
                 'args' => array(
@@ -64,7 +69,10 @@ class Core
             )
         );
 
-        register_rest_route($this->namespace, 'login', array(
+        register_rest_route(
+            $this->namespace,
+            'login',
+            array(
                 'methods' => 'POST',
                 'callback' => [$this, 'get_cpt_login'],
                 'args' => array(
@@ -80,7 +88,10 @@ class Core
             )
         );
 
-        register_rest_route($this->namespace, 'update/(?P<id>\d+)', array(
+        register_rest_route(
+            $this->namespace,
+            'update/(?P<id>\d+)',
+            array(
                 'methods' => 'PUT',
                 'callback' => [$this, 'update_cpt_data'],
                 'args' => array(
@@ -103,7 +114,10 @@ class Core
             )
         );
 
-        register_rest_route($this->namespace, 'delete/(?P<id>\d+)', array(
+        register_rest_route(
+            $this->namespace,
+            'delete/(?P<id>\d+)',
+            array(
                 'methods' => 'DELETE',
                 'callback' => [$this, 'delete_cpt_data'],
                 'args' => array(
@@ -116,16 +130,17 @@ class Core
                 )
             )
         );
-
     }
 
     /**
      * @param $request
      * @return mixed|\WP_REST_Response
      */
-    public function get_cpt_data($request)
+    public function getCptData($request)
     {
-        $cpt_id = $request['id'];
+        /** @var TYPE_NAME $cpt_id */
+        $cpt_id  = $request['id'];
+        /** @var TYPE_NAME $cptData */
         $cptData = CustomTableModel::find($cpt_id);
         return rest_ensure_response($cptData);
     }
@@ -135,16 +150,16 @@ class Core
      *
      * @return string
      */
-    public function get_cpt_login($request)
+    public function getCptLogin($request)
     {
         $creds = array();
         $creds['user_login'] = $request['username'];
         $creds['user_password'] = $request['password'];
         $creds['remember'] = true;
 
-        $user = wp_signon( $creds, false );
+        $user = wp_signon($creds, false);
 
-        if ( is_wp_error($user) ) {
+        if (is_wp_error($user)) {
             return $user->get_error_message();
         }
         return 'successfully login';
@@ -153,7 +168,7 @@ class Core
     /**
      * @return mixed|\WP_REST_Response
      */
-    public function get_cpt_data_list()
+    public function getCptDataList()
     {
         $cptData = CustomTableModel::all()->toArray();
         return rest_ensure_response($cptData);
@@ -163,7 +178,7 @@ class Core
      * @param $request
      * @return string
      */
-    public function create_cpt_data($request)
+    public function createCptData($request)
     {
         CustomTableModel::create(
             [
@@ -179,7 +194,7 @@ class Core
      * @param $request
      * @return string
      */
-    public function update_cpt_data($request)
+    public function updateCptData($request)
     {
         $cpt_id = $request['id'];
         CustomTableModel::where('id', $cpt_id)->update([
@@ -194,7 +209,7 @@ class Core
      * @param $request
      * @return string
      */
-    public function delete_cpt_data($request)
+    public function deleteCptData($request)
     {
         $cpt_id = $request['id'];
         CustomTableModel::where('id', $cpt_id)->delete();
@@ -207,18 +222,17 @@ class Core
      * @param WP_REST_Request $request Full data about the request.
      * @return WP_Error|bool
      */
-    public function get_items_permissions_check($request)
+    public function getItemsPermissionsCheck($request)
     {
         $creds = array();
         $creds['user_login'] = $_SERVER['PHP_AUTH_USER'];
         $creds['user_password'] = $_SERVER['PHP_AUTH_PW'];
         $creds['remember'] = true;
-        $user = wp_signon( $creds, false );
+        $user = wp_signon($creds, false);
 
-        if ( is_wp_error($user) ) {
+        if (is_wp_error($user)) {
             return false;
         }
         return true;
     }
-
 }

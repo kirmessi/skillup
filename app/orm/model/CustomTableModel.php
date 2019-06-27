@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Orm\Model;
 
 use \WeDevs\ORM\Eloquent\Model as Model;
 
@@ -8,7 +8,8 @@ use \WeDevs\ORM\Eloquent\Model as Model;
  * Class CustomTableModel
  * @package App
  */
-class CustomTableModel extends Model {
+class CustomTableModel extends Model
+{
 
     /**
      * Name for table without prefix
@@ -56,10 +57,9 @@ class CustomTableModel extends Model {
     public function getTable()
     {
         //In this example, it's set, but this is better in an abstract class
-        if( isset( $this->table ) ){
+        if (isset($this->table)) {
             $prefix =  $this->getConnection()->db->prefix;
             return $prefix . $this->table;
-
         }
 
         return parent::getTable();
