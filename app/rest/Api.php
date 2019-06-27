@@ -31,7 +31,7 @@ class Api
     {
         register_rest_route($this->namespace, '(?P<id>\d+)', array(
             'methods' => 'GET',
-            'callback' => [$this, 'get_cpt_data'],
+            'callback' => [$this, 'getCptData'],
             'args' => array(
                 'id' => array(
                     'validate_callback' => function ($param) {
@@ -44,7 +44,7 @@ class Api
 
         register_rest_route($this->namespace, 'list', array(
             'methods' => 'GET',
-            'callback' => [$this, 'get_cpt_data_list'],
+            'callback' => [$this, 'getCptDataList'],
             'permission_callback' => null,
         ));
 
@@ -53,7 +53,7 @@ class Api
             'create',
             array(
                 'methods' => 'POST',
-                'callback' => [$this, 'create_cpt_data'],
+                'callback' => [$this, 'createCptData'],
                 'args' => array(
                     'name' => array(
                         'type' => 'string',
@@ -65,7 +65,7 @@ class Api
                     ),
                 ),
 
-               'permission_callback' => array($this, 'get_items_permissions_check'),
+               'permission_callback' => array($this, 'getItemsPermissionsCheck'),
             )
         );
 
@@ -74,7 +74,7 @@ class Api
             'login',
             array(
                 'methods' => 'POST',
-                'callback' => [$this, 'get_cpt_login'],
+                'callback' => [$this, 'getCptLogin'],
                 'args' => array(
                     'username' => array(
                         'type' => 'string',
@@ -93,7 +93,7 @@ class Api
             'update/(?P<id>\d+)',
             array(
                 'methods' => 'PUT',
-                'callback' => [$this, 'update_cpt_data'],
+                'callback' => [$this, 'updateCptData'],
                 'args' => array(
                     'id' => array(
                         'validate_callback' => function ($param) {
@@ -110,7 +110,7 @@ class Api
                     ),
                 ),
 
-                'permission_callback' => array($this, 'get_items_permissions_check'),
+                'permission_callback' => array($this, 'getItemsPermissionsCheck'),
             )
         );
 
@@ -119,14 +119,14 @@ class Api
             'delete/(?P<id>\d+)',
             array(
                 'methods' => 'DELETE',
-                'callback' => [$this, 'delete_cpt_data'],
+                'callback' => [$this, 'deleteCptData'],
                 'args' => array(
                     'id' => array(
                         'validate_callback' => function ($param) {
                             return is_numeric($param);
                         },
                     ),
-                    'permission_callback' => array($this, 'get_items_permissions_check'),
+                    'permission_callback' => array($this, 'getItemsPermissionsCheck'),
                 )
             )
         );
@@ -146,7 +146,7 @@ class Api
     }
 
     /**
-     * @param $request
+     * @param PHP_CodeSniffer_File $request The file being scanned.
      *
      * @return string
      */
@@ -176,6 +176,7 @@ class Api
 
     /**
      * @param $request
+     *
      * @return string
      */
     public function createCptData($request)
@@ -192,6 +193,7 @@ class Api
 
     /**
      * @param $request
+     *
      * @return string
      */
     public function updateCptData($request)
@@ -207,6 +209,7 @@ class Api
 
     /**
      * @param $request
+     *
      * @return string
      */
     public function deleteCptData($request)
@@ -218,11 +221,10 @@ class Api
 
     /**
      * Check if a given request has access to get items
-     *
-     * @param WP_REST_Request $request Full data about the request.
-     * @return WP_Error|bool
+
+     * @return bool
      */
-    public function getItemsPermissionsCheck($request)
+    public function getItemsPermissionsCheck()
     {
         $creds = array();
         $creds['user_login'] = $_SERVER['PHP_AUTH_USER'];

@@ -13,8 +13,8 @@ class Theme
      */
     private function getConfig()
     {
-        if (file_exists(get_template_directory() .'/app/config/classes/classes.php')) {
-            return require(get_template_directory().'/app/config/classes/classes.php');
+        if (file_exists(get_template_directory() .'/app/config/classes/config.php')) {
+            return require(get_template_directory().'/app/config/classes/config.php');
         } else {
             return false;
         }
